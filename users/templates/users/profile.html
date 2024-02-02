@@ -1,0 +1,19 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    <section class="container mt-4">
+        <h2>User Profile</h2>
+        {% if user_profile.username %}
+            <p>Username: {{ user_profile.username }}</p>
+        {% else %}
+            <p>Username:
+            <a href="{% url 'edit_profile' %}">Don't have one? Click the message</a>
+            </p>
+        {% endif %}
+        <p>Email: {{ user_profile.email }}</p>
+        <p>Premium status: {{ user_profile.is_premium }}</p>
+        <a href="{% url 'edit_profile' %}">
+            <button type="button">Change Profile</button>
+        </a>
+    </section>
+{% endblock %}

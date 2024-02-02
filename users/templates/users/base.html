@@ -1,0 +1,53 @@
+{% load static %}
+{% load bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Your Website{% endblock %}</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <!-- Add other styles if needed -->
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <!-- Bootstrap navigation bar (hat) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <!-- Home button -->
+            <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+
+            <!-- TTS (Text-to-Speech) button -->
+            <a class="navbar-brand" href="{% url 'convert_text_to_speech' %}">TTS</a>
+
+            <!-- History button (Add your URL for history) -->
+            <a class="navbar-brand" href="#">History</a>
+
+            <div class="ml-auto">
+                <div class="btn-group">
+                    {% if user.is_authenticated %}
+                        <!-- Profile, Logout dropdown -->
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{% url 'profile' user.pk %}">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    {% else %}
+                        <!-- Login button -->
+                        <a class="btn btn-secondary" href="{% url 'login' %}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Your content goes here -->
+    {% block content %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
