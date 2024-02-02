@@ -1,5 +1,4 @@
-
-import os.path
+import os
 
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -42,12 +41,20 @@ class TextToSpeechView(View):
                     text=text,
                     output_file=f"{text.split()[0]}.mp3"
                 )
+            elif '.docx' in instance.filename:
+                text_from_docx = audio_converter.docx_to_text(
+                    docx_path=f'media/text_files/{instance.filename.replace(" ", "_")}'
+                )
+                output_file = audio_converter.text_to_speech(
+                    text=text_from_docx,
+                    output_file=instance.filename.replace('.docx', '.mp3')
+                )
             elif '.pdf' in instance.filename:
-                text_from_pdf = audio_converter.pdf_to_txt(
+                text_from_pdf = audio_converter.pdf_to_text(
                     pdf_path=f'media/text_files/{instance.filename.replace(" ", "_")}'
                 )
                 output_file = audio_converter.text_to_speech(
-                    text_from_pdf,
+                    text=text_from_pdf,
                     output_file=instance.filename.replace('.pdf', '.mp3')
                 )
             elif '.txt' in instance.filename:
@@ -56,7 +63,7 @@ class TextToSpeechView(View):
                     txt_file=f'media/text_files/{instance.filename.replace(" ", "_")}'
                 )
                 output_file = audio_converter.text_to_speech(
-                    text_from_file,
+                    text=text_from_file,
                     output_file=instance.filename.replace('.txt', '.mp3')
                 )
 
