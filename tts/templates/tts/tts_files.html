@@ -3,17 +3,18 @@
 
 {% block content %}
   <div class="container mt-5">
+    <h2>Your Files</h2>
+    <ul>
+      {% for file in user_files %}
+        <li>
+          <button class="tts-button" data-text="{{ file.text }}">{{ file.filename }}</button>
+        </li>
+        <li>
+          <button class="tts-button" data-text="{{ file.text }}" data-audio="{{ file.audio_file.url }}">{{ file.audio_filename }}</button>
+        </li>
+      {% endfor %}
+    </ul>
     <div class="row">
-      <div class="col-md-6">
-        <h2>Convert Text to Speech</h2>
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Convert and Save</button>
-          <a class="btn btn-primary" href="{% url 'tts_files' %}">Go here to watch your files</a>
-        </form>
-      </div>
-      {% if audio_file_url and output_file %}
       <div class="col-md-6 text-right">
         <audio id="audioPlayer" controls>
           <source src="{{ audio_file_url }}" type="audio/mpeg">
@@ -28,7 +29,6 @@
       </div>
     </div>
   </div>
-{% endif %}
 
   <script src="{% static 'audio_track_buttons.js' %}"></script>
 {% endblock %}

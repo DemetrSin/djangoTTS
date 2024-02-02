@@ -1,4 +1,5 @@
 import os
+from django.shortcuts import get_object_or_404
 
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -80,3 +81,13 @@ class TextToSpeechView(View):
             'output_file': output_file
         }
                       )
+
+
+class TtsFilesView(View):
+    template_name = 'tts/tts_files.html'
+
+    def get(self, request, *args, **kwargs):
+        user_files = AudioFile.objects.filter(user=request.user)
+        return render(request, self.template_name, {'user_files': user_files})
+
+    # audio_file = get_object_or_404(AudioFile, id=file_id, user=request.user)
