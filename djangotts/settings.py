@@ -133,7 +133,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'tts', 'static'),
-    os.path.join(BASE_DIR, 'users', 'static'),
+    # os.path.join(BASE_DIR, 'users', 'static'),
 ]
 
 STATICFILES_FINDERS = [

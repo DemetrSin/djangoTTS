@@ -25,7 +25,6 @@ class TextToSpeechView(View):
 
         if form.is_valid():
             text = form.cleaned_data['text']
-            text_file = form.cleaned_data['text_file']
             instance = form.save(commit=False)
             instance.user = request.user
 
@@ -59,7 +58,6 @@ class TextToSpeechView(View):
                     output_file=instance.filename.replace('.pdf', '.mp3')
                 )
             elif '.txt' in instance.filename:
-                print(instance.filename)
                 text_from_file = audio_converter.read_txt(
                     txt_file=f'media/text_files/{instance.filename.replace(" ", "_")}'
                 )
@@ -69,8 +67,8 @@ class TextToSpeechView(View):
                 )
 
             audio_file_url = f"{settings.MEDIA_URL}{output_file}"
-            instance.audio_file = audio_file_url
-            instance.audio_filename = audio_file_url
+            instance.audiofile = audio_file_url.removeprefix('/media/')
+            instance.audiofile.name = output_file
             instance.save()
         else:
             return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url})
@@ -89,5 +87,3 @@ class TtsFilesView(View):
     def get(self, request, *args, **kwargs):
         user_files = AudioFile.objects.filter(user=request.user)
         return render(request, self.template_name, {'user_files': user_files})
-
-    # audio_file = get_object_or_404(AudioFile, id=file_id, user=request.user)
