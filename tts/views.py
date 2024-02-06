@@ -1,8 +1,7 @@
 import os
-from django.shortcuts import get_object_or_404
 
 from django.conf import settings
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from tts.text_to_speech import AudioConverter
@@ -67,8 +66,12 @@ class TextToSpeechView(View):
                 )
 
             audio_file_url = f"{settings.MEDIA_URL}{output_file}"
-            instance.audiofile = audio_file_url.removeprefix('/media/')
-            instance.audiofile.name = output_file
+
+            if '.mp3' in output_file:
+                instance.audiofile = audio_file_url.removeprefix('/media/')
+                instance.audiofile.name = output_file
+            if '.zip' in output_file:
+                instance.zipfile.name = output_file
             instance.save()
         else:
             return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url})

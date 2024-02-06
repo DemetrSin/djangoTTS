@@ -3,15 +3,32 @@
 
 {% block content %}
   <div class="container mt-5">
-    <h2>Your Files</h2>
+
     {% if user_files %}
+
         <ul>
+            <h2>Your Audio Files</h2>
             {% for audio_file in user_files %}
+            {% if audio_file.audiofile.name %}
+
                 <li>
+
                     {{ audio_file.audiofile.name }} -
                     <a href="{{ audio_file.audiofile.url }}" target="_blank">Play</a> |
                     <a href="{{ audio_file.audiofile.url }}" download>Download</a>
                 </li>
+            {% endif %}
+            {% endfor %}
+            <h2>Your Zip Files</h2>
+            {% for zip_files in user_files %}
+            {% if zip_files.zipfile %}
+
+            <li>
+                    {{ zip_files.zipfile.name}} -
+                    <a href="{{ zip_files.zipfile.url }}" target="_blank">Play</a> |
+                    <a href="{{ zip_files.zipfile.url }}" download>Download</a>
+                </li>
+            {% endif %}
             {% endfor %}
         </ul>
     {% else %}
