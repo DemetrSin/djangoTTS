@@ -24,12 +24,12 @@
             {% if zip_files.zipfile %}
 
             <li>
-                    {{ zip_files.zipfile.name}} -
-                    <a href="{{ zip_files.zipfile.url }}" target="_blank">Play</a> |
+                    {{ zip_files.zipfile.name}} - |
                     <a href="{{ zip_files.zipfile.url }}" download>Download</a>
                 </li>
             {% endif %}
             {% endfor %}
+
         </ul>
     {% else %}
         <p>No text-to-speech files available.</p>

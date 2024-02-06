@@ -29,11 +29,8 @@ class AudioFile(models.Model):
                 os.remove(os.path.join(settings.MEDIA_ROOT, self.audiofile.name))
             if self.zipfile:
                 zipfile_path = os.path.join(settings.MEDIA_ROOT, self.zipfile.name)
-                with ZipFile(zipfile_path, 'r') as zipf:
-                    file_names = zipf.namelist()
-                    for file_name in file_names:
-                        os.remove(os.path.join(settings.MEDIA_ROOT, file_name))
-                os.remove(os.path.join(settings.MEDIA_ROOT, self.zipfile.name))
+                get_file_names_from_zip(zipfile_path)
+                os.remove(zipfile_path)
         except:
             pass
         super().delete(*args, **kwargs)
@@ -48,10 +45,14 @@ def delete_files_on_audiofile_delete(sender, instance, **kwargs):
             os.remove(os.path.join(settings.MEDIA_ROOT, instance.audiofile.name))
         if instance.zipfile:
             zipfile_path = os.path.join(settings.MEDIA_ROOT, instance.zipfile.name)
-            with ZipFile(zipfile_path, 'r') as zipf:
-                file_names = zipf.namelist()
-                for file_name in file_names:
-                    os.remove(os.path.join(settings.MEDIA_ROOT, file_name))
-            os.remove(os.path.join(settings.MEDIA_ROOT, instance.zipfile.name))
+            get_file_names_from_zip(zipfile_path)
+            os.remove(zipfile_path)
     except:
         pass
+
+
+def get_file_names_from_zip(zipfile_path):
+    with ZipFile(zipfile_path, 'r') as zipf:
+        file_names = zipf.namelist()
+        for file_name in file_names:
+            os.remove(os.path.join(settings.MEDIA_ROOT, file_name))
