@@ -1,14 +1,14 @@
 import os
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render
 from django.views import View
 
-from tts.text_to_speech import AudioConverter
-from django.http import HttpResponse
+from .text_to_speech import AudioConverter
+
 
 from .forms import TextToSpeechForm
-from .models import AudioFile
+from .models import AudioFile, UserAction
 
 
 class TextToSpeechView(View):
@@ -16,8 +16,7 @@ class TextToSpeechView(View):
 
     def get(self, request, *args, **kwargs):
         form = TextToSpeechForm()
-        user_files = AudioFile.objects.filter(user=request.user)
-        return render(request, self.template_name, {'form': form, 'user_files': user_files})
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = TextToSpeechForm(request.POST, request.FILES)
@@ -71,8 +70,10 @@ class TextToSpeechView(View):
             if '.mp3' in output_file:
                 instance.audiofile = audio_file_url.removeprefix('/media/')
                 instance.audiofile.name = output_file
+                UserAction.objects.create(user=request.user, action=f"Created an {output_file}")
             if '.zip' in output_file:
                 instance.zipfile.name = output_file
+                UserAction.objects.create(user=request.user, action=f"Created an {output_file}")
             instance.save()
         else:
             return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url})
@@ -91,3 +92,11 @@ class TtsFilesView(View):
     def get(self, request, *args, **kwargs):
         user_files = AudioFile.objects.filter(user=request.user)
         return render(request, self.template_name, {'user_files': user_files})
+
+
+class UsersHistoryView(View):
+    template_name = 'tts/history.html'
+
+    def get(self, request, *args, **kwargs):
+        user_actions = UserAction.objects.filter(user=request.user)
+        return render(request, self.template_name, {'user_actions': user_actions})

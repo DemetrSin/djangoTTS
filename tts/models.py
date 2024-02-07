@@ -51,6 +51,12 @@ def delete_files_on_audiofile_delete(sender, instance, **kwargs):
         pass
 
 
+class UserAction(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    action = models.CharField(max_length=124, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 def get_file_names_from_zip(zipfile_path):
     with ZipFile(zipfile_path, 'r') as zipf:
         file_names = zipf.namelist()

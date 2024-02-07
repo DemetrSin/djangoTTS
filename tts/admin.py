@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-from tts.models import AudioFile
+from .models import AudioFile, UserAction
 
 admin.site.register(AudioFile)
+admin.site.register(UserAction)
