@@ -36,6 +36,15 @@ class AudioFile(models.Model):
         super().delete(*args, **kwargs)
 
 
+class UserAction(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    action = models.CharField(max_length=124, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user}"
+
+
 @receiver(pre_delete, sender=AudioFile)
 def delete_files_on_audiofile_delete(sender, instance, **kwargs):
     try:
@@ -49,12 +58,6 @@ def delete_files_on_audiofile_delete(sender, instance, **kwargs):
             os.remove(zipfile_path)
     except:
         pass
-
-
-class UserAction(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    action = models.CharField(max_length=124, null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 def get_file_names_from_zip(zipfile_path):

@@ -1,17 +1,18 @@
 {% extends 'users/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
   <div class="container mt-5">
     {% if user_actions %}
       <ul>
-        <h2>Your Action History</h2>
+        <h2>{% trans "Your Action History" %}</h2>
         {% for action in user_actions %}
           <li>{{ action.action }} - {{ action.timestamp }}</li>
         {% endfor %}
       </ul>
     {% else %}
-      <p>No action history available.</p>
+      <p>{% trans "No action history available." %}</p>
     {% endif %}
   </div>
 {% endblock %}

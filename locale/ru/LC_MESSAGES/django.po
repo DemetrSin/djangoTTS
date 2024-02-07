@@ -1,0 +1,141 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-07 09:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:8
+msgid "Convert Text to Speech"
+msgstr "Преобразовать текст в речь"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:12
+msgid "Convert and Save"
+msgstr "Преобразовать и сохранить"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:13
+msgid "Go here to watch your files"
+msgstr "Перейдите сюда, чтобы просмотреть ваши файлы"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:20
+msgid "Your browser does not support the audio element."
+msgstr "Ваш браузер не поддерживает элемент аудио."
+
+#: .\tts\templates\tts\convert_text_to_speech.html:24
+#: .\tts\templates\tts\tts_files.html:17
+msgid "Play"
+msgstr "Воспроизвести"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:25
+msgid "Pause"
+msgstr "Пауза"
+
+#: .\tts\templates\tts\convert_text_to_speech.html:26
+msgid "Stop"
+msgstr "Стоп"
+
+#: .\tts\templates\tts\history.html:8
+msgid "Your Action History"
+msgstr "Ваша история действий"
+
+#: .\tts\templates\tts\history.html:14
+msgid "No action history available."
+msgstr "История действий недоступна."
+
+#: .\tts\templates\tts\tts_files.html:10
+msgid "Your Audio Files"
+msgstr "Ваши аудиофайлы"
+
+#: .\tts\templates\tts\tts_files.html:18 .\tts\templates\tts\tts_files.html:28
+msgid "Download"
+msgstr "Скачать"
+
+#: .\tts\templates\tts\tts_files.html:22
+msgid "Your Zip Files"
+msgstr "Ваши zip-файлы"
+
+#: .\tts\templates\tts\tts_files.html:35
+msgid "No text-to-speech files available."
+msgstr "Нет доступных файлов текст в речь."
+
+#: .\users\templates\users\base.html:5
+msgid "en"
+msgstr "ru"
+
+#: .\users\templates\users\base.html:9
+msgid "Your Website"
+msgstr "Ваш веб-сайт"
+
+#: .\users\templates\users\base.html:20
+msgid "Home"
+msgstr "Главная"
+
+#: .\users\templates\users\base.html:23
+msgid "TTS"
+msgstr "TTS"
+
+#: .\users\templates\users\base.html:26
+msgid "History"
+msgstr "История"
+
+#: .\users\templates\users\base.html:33 .\users\templates\users\base.html:36
+msgid "Profile"
+msgstr "Профиль"
+
+#: .\users\templates\users\base.html:38
+msgid "Logout"
+msgstr "Выйти"
+
+#: .\users\templates\users\base.html:42
+msgid "Login"
+msgstr "Войти"
+
+#: .\users\templates\users\edit_profile.html:5
+msgid "Edit Profile"
+msgstr "Редактировать профиль"
+
+#: .\users\templates\users\edit_profile.html:9
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+#: .\users\templates\users\home.html:7
+msgid "Welcome to our Text-to-Speech App!"
+msgstr "Добро пожаловать в наше приложение текст в речь!"
+
+#: .\users\templates\users\home.html:8
+msgid "This is the home page content."
+msgstr "Это содержимое домашней страницы."
+
+#: .\users\templates\users\profile.html:5
+msgid "User Profile"
+msgstr "Профиль пользователя"
+
+#: .\users\templates\users\profile.html:7
+#: .\users\templates\users\profile.html:9
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: .\users\templates\users\profile.html:10
+msgid "Don't have one? Click the message"
+msgstr "У вас нет аккаунта? Нажмите на сообщение"
+
+#: .\users\templates\users\profile.html:13
+msgid "Email"
+msgstr "Email"
+
+#: .\users\templates\users\profile.html:14
+msgid "Premium status"
+msgstr "Статус премиум"
+
+#: .\users\templates\users\profile.html:16
+msgid "Change Profile"
+msgstr "Изменить профиль"

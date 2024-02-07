@@ -72,8 +72,8 @@ class TextToSpeechView(View):
                 instance.audiofile.name = output_file
                 UserAction.objects.create(user=request.user, action=f"Created an {output_file}")
             if '.zip' in output_file:
-                instance.zipfile.name = output_file
-                UserAction.objects.create(user=request.user, action=f"Created an {output_file}")
+                instance.zipfile.name = os.path.basename(output_file)
+                UserAction.objects.create(user=request.user, action=f"Created an {os.path.basename(output_file)}")
             instance.save()
         else:
             return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url})

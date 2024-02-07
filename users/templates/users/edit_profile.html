@@ -1,12 +1,13 @@
 {% extends 'users/base.html' %}
+{% load i18n %}
 
 {% block content %}
     <section class="container mt-4">
-        <h2>Edit Profile</h2>
+        <h2>{% trans "Edit Profile" %}</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Save Changes</button>
+            <button type="submit">{% trans "Save Changes" %}</button>
         </form>
     </section>
 {% endblock %}

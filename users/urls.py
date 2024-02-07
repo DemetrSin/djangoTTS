@@ -10,4 +10,5 @@ urlpatterns = [
     path('home', views.HomeView.as_view(), name='home'),
     path('profile/<int:pk>', login_required(views.UserProfileView.as_view()), name='profile'),
     path('profile/edit', login_required(views.EditProfileView.as_view()), name='edit_profile'),
+
 ]

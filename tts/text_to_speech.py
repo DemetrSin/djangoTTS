@@ -32,6 +32,7 @@ class AudioConverter:
         tts = gTTS(text, lang='en', slow=False)
         tts.save(output_path)
         return output_file
+
     @staticmethod
     def pdf_to_text(pdf_path):
         pdf_document = fitz.open(pdf_path)
