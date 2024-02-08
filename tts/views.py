@@ -1,13 +1,15 @@
 import os
 
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
 from .text_to_speech import AudioConverter
+from .speech_to_text import STT
 
 
-from .forms import TextToSpeechForm
+from .forms import TextToSpeechForm, STTForm
 from .models import AudioFile, UserAction
 
 
@@ -100,3 +102,30 @@ class UsersHistoryView(View):
     def get(self, request, *args, **kwargs):
         user_actions = UserAction.objects.filter(user=request.user)
         return render(request, self.template_name, {'user_actions': user_actions})
+
+
+class STTView(View):
+    template_name = 'tts/stt.html'
+
+    def get(self, request, *args, **kwargs):
+        form = STTForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = STTForm(request.POST, request.FILES)
+        stt = STT()
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            if '.wav' in instance.audiofile.name:
+                text = stt.audio_to_text(instance.audiofile)
+
+            if instance.audiofile.name.endswith('.mp3'):
+                audiofile = stt.mp3_to_wav(
+                    mp3_file=instance.audiofile,
+                    wav_file=instance.audiofile.name.replace('.mp3', '.wav')
+                )
+                text = stt.audio_to_text(audiofile)
+            UserAction.objects.create(user=request.user, action=f"Created text from {instance.audiofile.name}")
+
+        return render(request, self.template_name, {'form': form, 'text': text})
