@@ -16,7 +16,7 @@ class TextToSpeechForm(forms.ModelForm):
         fields = ['text', 'text_file']
 
 
-class STTForm(forms.ModelForm):
+class AudioToTextForm(forms.ModelForm):
     class Meta:
         model = AudioFile
         fields = ['audiofile']

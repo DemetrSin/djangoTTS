@@ -20,7 +20,6 @@ class STT:
             while total_duration_processed < duration:
                 recorded_audio = self.recognizer.listen(source, phrase_time_limit=duration)
                 total_duration_processed += chunk_duration
-                print("Processed {} seconds out of {} seconds".format(total_duration_processed, duration))
 
                 try:
                     text = self.recognizer.recognize_google(
@@ -32,3 +31,20 @@ class STT:
                 except:
                     pass
             return full_text
+
+    def speech_to_text(self):
+
+        with sr.Microphone() as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            recorded_audio = self.recognizer.listen(source)
+
+        ''' Recognizing the Audio '''
+        try:
+            text = self.recognizer.recognize_google(
+                    recorded_audio,
+                    language="en-US"
+                )
+            print("Decoded Text : {}".format(text))
+            return text
+        except:
+            pass

@@ -12,4 +12,9 @@
     </form>
     <p>{{ text }}</p>
 </div>
+<p>Wanna record your own message? It will record your voice as long as you will talking, but don't make a long pause,
+    after you stop talk, it'll need some time to process and obtain text from your speech. Press the button and start
+    talking in 1 second.
+    you stop talkin</p>
+<a class="btn btn-primary" href="{% url 'process_speech' %}">I'm the button!</a>
 {% endblock %}

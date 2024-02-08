@@ -9,7 +9,7 @@ from .text_to_speech import AudioConverter
 from .speech_to_text import STT
 
 
-from .forms import TextToSpeechForm, STTForm
+from .forms import TextToSpeechForm, AudioToTextForm
 from .models import AudioFile, UserAction
 
 
@@ -104,15 +104,15 @@ class UsersHistoryView(View):
         return render(request, self.template_name, {'user_actions': user_actions})
 
 
-class STTView(View):
+class AudioToTextView(View):
     template_name = 'tts/stt.html'
 
     def get(self, request, *args, **kwargs):
-        form = STTForm()
+        form = AudioToTextForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = STTForm(request.POST, request.FILES)
+        form = AudioToTextForm(request.POST, request.FILES)
         stt = STT()
         if form.is_valid():
             instance = form.save(commit=False)
@@ -129,3 +129,13 @@ class STTView(View):
             UserAction.objects.create(user=request.user, action=f"Created text from {instance.audiofile.name}")
 
         return render(request, self.template_name, {'form': form, 'text': text})
+
+
+class SpeechToTextView(View):
+    template_name = 'tts/speech_to_text.html'
+
+    def get(self, request):
+        stt = STT()
+        text = stt.speech_to_text()
+        UserAction.objects.create(user=request.user, action="Get record your own voice")
+        return render(request, self.template_name, {'text': text})
