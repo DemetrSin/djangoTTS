@@ -1,11 +1,10 @@
 import os
+from zipfile import ZipFile
 
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-
-from zipfile import ZipFile
 
 
 class AudioFile(models.Model):
@@ -24,7 +23,7 @@ class AudioFile(models.Model):
     def delete(self, *args, **kwargs):
         try:
             if self.text_file:
-                os.remove(os.path.join(settings.MEDIA_ROOT,  self.text_file.name))
+                os.remove(os.path.join(settings.MEDIA_ROOT, self.text_file.name))
             if self.audiofile:
                 os.remove(os.path.join(settings.MEDIA_ROOT, self.audiofile.name))
             if self.zipfile:
@@ -34,6 +33,10 @@ class AudioFile(models.Model):
         except:
             pass
         super().delete(*args, **kwargs)
+
+    @staticmethod
+    def count_files(user):
+        return AudioFile.objects.filter(user=user).count()
 
 
 @receiver(pre_delete, sender=AudioFile)
@@ -55,6 +58,9 @@ class UserAction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     action = models.CharField(max_length=124, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user}"
 
 
 def get_file_names_from_zip(zipfile_path):

@@ -13,6 +13,9 @@
           <a class="btn btn-primary" href="{% url 'tts_files' %}">Go here to watch your files</a>
         </form>
       </div>
+      {% if users_limit %}
+      <p>Please, check your files, you can't have more than 10 files at all because you're not premium user</p>
+      {% endif %}
       {% if audio_file_url and output_file %}
       <div class="col-md-6 text-right">
         <audio id="audioPlayer" controls>

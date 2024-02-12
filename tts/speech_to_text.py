@@ -1,5 +1,5 @@
-from pydub import AudioSegment
 import speech_recognition as sr
+from pydub import AudioSegment
 
 
 class STT:
@@ -41,10 +41,9 @@ class STT:
         ''' Recognizing the Audio '''
         try:
             text = self.recognizer.recognize_google(
-                    recorded_audio,
-                    language="en-US"
-                )
-            print("Decoded Text : {}".format(text))
+                recorded_audio,
+                language="en-US"
+            )
             return text
         except:
             pass

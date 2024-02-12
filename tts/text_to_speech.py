@@ -6,6 +6,7 @@ import fitz
 from django.conf import settings
 from docx import Document
 from gtts import gTTS
+from langdetect import detect
 
 
 class AudioConverter:
@@ -13,8 +14,8 @@ class AudioConverter:
     @staticmethod
     def read_txt(txt_file):
         with open(file=txt_file, mode='r', encoding='utf-8') as file:
-            content = file.read()
-        return content
+            text = file.read()
+        return text
 
     def text_to_speech(self, text, output_file):
         output_path = os.path.join(settings.MEDIA_ROOT, output_file)
@@ -24,14 +25,15 @@ class AudioConverter:
             for i, chunk in enumerate(chunks, start=1):
                 output_file_i = self.get_new_filename(output_path)
                 output_path_i = os.path.join(settings.MEDIA_ROOT, output_file_i)
-                tts = gTTS(chunk, lang='en', slow=False)
+                tts = gTTS(chunk, lang=self.detect_language(chunk), slow=False)
                 tts.save(output_path_i)
                 output_files.append(output_file_i)
             zipf = self.pack_to_zip(files_list=output_files, zip_name=output_files[0].replace('.mp3', '.zip'))
             return zipf
-        tts = gTTS(text, lang='en', slow=False)
+        tts = gTTS(text, lang=self.detect_language(text), slow=False)
         tts.save(output_path)
         return output_file
+
     @staticmethod
     def pdf_to_text(pdf_path):
         pdf_document = fitz.open(pdf_path)
@@ -93,3 +95,8 @@ class AudioConverter:
     def unpack_zip(path_to_zip, path_to_unpack):
         with ZipFile(path_to_zip, 'r') as zip_ref:
             zip_ref.extractall(path_to_unpack)
+
+    @staticmethod
+    def detect_language(text):
+        detected_lang = detect(text)
+        return detected_lang if detected_lang and (detected_lang == 'en' or detected_lang == 'ru') else 'en'

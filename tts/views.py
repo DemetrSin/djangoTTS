@@ -5,12 +5,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
-from .text_to_speech import AudioConverter
-from .speech_to_text import STT
-
-
-from .forms import TextToSpeechForm, AudioToTextForm
+from .forms import AudioToTextForm, TextToSpeechForm
 from .models import AudioFile, UserAction
+from .speech_to_text import STT
+from .text_to_speech import AudioConverter
 
 
 class TextToSpeechView(View):
@@ -23,8 +21,11 @@ class TextToSpeechView(View):
     def post(self, request, *args, **kwargs):
         form = TextToSpeechForm(request.POST, request.FILES)
         audio_file_url = None
+        users_limit = False
+        if AudioFile.count_files(user=request.user) >= 5 and not request.user.is_premium:
+            users_limit = True
 
-        if form.is_valid():
+        if form.is_valid() and not users_limit:
             text = form.cleaned_data['text']
             instance = form.save(commit=False)
             instance.user = request.user
@@ -40,7 +41,7 @@ class TextToSpeechView(View):
             if text:
                 output_file = audio_converter.text_to_speech(
                     text=text,
-                    output_file=f"{text.split()[0]}.mp3"
+                    output_file=f"{text.split()[0]}.mp3",
                 )
             elif '.docx' in instance.filename:
                 text_from_docx = audio_converter.docx_to_text(
@@ -78,7 +79,7 @@ class TextToSpeechView(View):
                 UserAction.objects.create(user=request.user, action=f"Created an {output_file}")
             instance.save()
         else:
-            return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url})
+            return render(request, self.template_name, {'form': form, 'audio_file_url': audio_file_url, 'users_limit': users_limit})
 
         return render(request, self.template_name, {
             'form': form,
