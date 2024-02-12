@@ -9,4 +9,8 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.pk} {self.username} {self.auth0_id}"
-    
+
+
+class AnonymousFiles(models.Model):
+    text = models.TextField()
+    audiofile = models.FileField(upload_to='audio_files', blank=True, null=True)

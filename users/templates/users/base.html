@@ -18,7 +18,7 @@
         <div class="container">
             <!-- Home button -->
             <a class="navbar-brand" href="{% url 'home' %}">Home</a>
-
+            {% if user.is_authenticated %}
             <!-- TTS (Text-to-Speech) button -->
             <a class="navbar-brand" href="{% url 'convert_text_to_speech' %}">TTS</a>
 
@@ -26,6 +26,7 @@
 
             <!-- History button (Add your URL for history) -->
             <a class="navbar-brand" href="{% url 'history' %}">History</a>
+            {% endif %}
 
             <div class="ml-auto">
                 <div class="btn-group">

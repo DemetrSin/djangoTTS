@@ -6,8 +6,11 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 
-from .forms import UserProfileForm
+from .forms import UserProfileForm, AnonymousHomeTTSForm
 from .models import CustomUser
+
+from tts.text_to_speech import AudioConverter
+
 
 oauth = OAuth()
 
@@ -61,8 +64,39 @@ class HomeView(View):
             token = request.session['user']
             if 'userinfo' in token:
                 user_info = token['userinfo']
-        context = {'user_info': user_info, 'user': user}
+        form = AnonymousHomeTTSForm()
+        context = {'user_info': user_info, 'user': user, 'form': form}
         return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = AnonymousHomeTTSForm(request.POST, request.FILES)
+        audio_file_url = None
+        fail = False
+        audio_converter = AudioConverter()
+        if form.is_valid():
+            text = form.cleaned_data['text']
+            if len(text) < 500:
+                output_file = audio_converter.text_to_speech(
+                    text=text,
+                    output_file=f"{text.split()[0]}.mp3",
+                )
+            else:
+                fail = True
+            if not fail:
+                audio_file_url = f"{settings.MEDIA_URL}{output_file}"
+        else:
+            return render(request, self.template_name, {
+                'form': form,
+                'audio_file_url': audio_file_url,
+                'fail': fail
+            }
+                          )
+        return render(request, self.template_name, {
+            'form': form,
+            'audio_file_url': audio_file_url,
+            'fail': fail
+        }
+                      )
 
 
 class UserProfileView(View):
@@ -90,3 +124,6 @@ class EditProfileView(UpdateView):
             form.save()
             return redirect(reverse('profile', kwargs={'pk': user_profile.pk}))
         return render(request, self.template_name, {'form': form})
+
+
+
