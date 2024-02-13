@@ -9,7 +9,9 @@ from django.views.generic import UpdateView
 from tts.text_to_speech import AudioConverter
 
 from .forms import AnonymousHomeTTSForm, UserProfileForm
-from .models import CustomUser
+from .models import CustomUser, Subscription
+from django.contrib import messages
+from datetime import datetime, timedelta
 
 oauth = OAuth()
 
@@ -108,7 +110,17 @@ class UserProfileView(View):
 
     def get(self, request, *args, **kwargs):
         user_profile = CustomUser.objects.get(pk=request.user.pk)
-        return render(request, self.template_name, {'user_profile': user_profile})
+        subscription = user_profile.subscription_set.filter(is_active=True).first()
+        messages_for_user = messages.get_messages(request)
+        return render(
+            request,
+            self.template_name,
+            {
+                'user_profile': user_profile,
+                'messages_for_user': messages_for_user,
+                'subscription': subscription
+            }
+        )
 
 
 class EditProfileView(UpdateView):
@@ -134,3 +146,30 @@ class SubscriptionView(View):
     def get(self, request):
         return render(request, self.template_name)
 
+    def post(self, request, **kwargs):
+        duration = int(request.POST.get('duration'))
+        start_date = datetime.now()
+        end_date = start_date + timedelta(days=duration)
+        end_date = end_date.replace(
+            hour=start_date.hour,
+            minute=start_date.minute,
+            second=start_date.second,
+            microsecond=start_date.microsecond
+        )
+        existing_subscription = Subscription.objects.filter(user=request.user, is_active=True).first()
+        if existing_subscription:
+            existing_subscription.end_date += timedelta(days=duration)
+            existing_subscription.save()
+        else:
+            Subscription.objects.create(
+                user=request.user,
+                start_date=start_date,
+                end_date=end_date,
+                is_active=True,
+                payment_status=True,
+            )
+
+        request.user.is_premium = True
+        request.user.save()
+        messages.success(request, 'Subscription purchased successfully!')
+        return redirect(reverse('profile', kwargs={'pk': request.user.pk}))

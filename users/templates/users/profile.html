@@ -12,6 +12,15 @@
         {% endif %}
         <p>Email: {{ user_profile.email }}</p>
         <p>Premium status: {{ user_profile.is_premium }}</p>
+        {% if subscription %}
+        <p>Expired status: {{ subscription.end_date }}</p>
+        {% endif %}
+
+        {% for message in messages_for_user %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
         <a href="{% url 'edit_profile' %}">
             <button type="button">Change Profile</button>
         </a>

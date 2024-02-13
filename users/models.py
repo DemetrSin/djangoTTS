@@ -40,3 +40,6 @@ class Subscription(models.Model):
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=False)
     payment_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user
