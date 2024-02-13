@@ -3,18 +3,26 @@
 
 {% block content %}
 <div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1 class="text-center">Speech to Text</h1>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary d-block mx-auto">Convert and Save</button>
+      </form>
+      <h6 class="text-center">{{ text }}</h6>
+    </div>
+  </div>
 
-  <h1>Speech to Text</h1>
-    <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Convert and Save</button>
-    </form>
-    <p>{{ text }}</p>
+  <div class="row justify-content-center mt-3">
+    <div class="col-md-8">
+      <p>Wanna record your own message? It will record your voice as long as you will talking, but don't make a long pause,
+        after you stop talk, it'll need some time to process and obtain text from your speech. Press the button and start
+        talking in 1 second.
+        you stop talkin</p>
+      <a class="btn btn-primary d-block mx-auto" href="{% url 'process_speech' %}">I'm the button!</a>
+    </div>
+  </div>
 </div>
-<p>Wanna record your own message? It will record your voice as long as you will talking, but don't make a long pause,
-    after you stop talk, it'll need some time to process and obtain text from your speech. Press the button and start
-    talking in 1 second.
-    you stop talkin</p>
-<a class="btn btn-primary" href="{% url 'process_speech' %}">I'm the button!</a>
 {% endblock %}

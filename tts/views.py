@@ -16,10 +16,10 @@ class TextToSpeechView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = TextToSpeechForm(request.POST, request.FILES)
+        form = TextToSpeechForm(request.POST, request.FILES, user=request.user)
         audio_file_url = None
         users_limit = False
-        if AudioFile.count_files(user=request.user) >= 5 and not request.user.is_premium:
+        if AudioFile.count_files(user=request.user) >= 10 and not request.user.is_premium:
             users_limit = True
 
         if form.is_valid() and not users_limit:

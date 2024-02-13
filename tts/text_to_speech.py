@@ -19,7 +19,7 @@ class AudioConverter:
 
     def text_to_speech(self, text, output_file):
         output_path = os.path.join(settings.MEDIA_ROOT, output_file)
-        if len(text) > 100:
+        if len(text) > 500:
             output_files = []
             chunks = self.split_text_into_chunks(text, 200)
             for i, chunk in enumerate(chunks, start=1):
