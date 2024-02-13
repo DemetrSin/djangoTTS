@@ -20,20 +20,6 @@ class AudioFile(models.Model):
     def __str__(self):
         return f"{self.pk} > {self.user.username} > {self.filename}"
 
-    def delete(self, *args, **kwargs):
-        try:
-            if self.text_file:
-                os.remove(os.path.join(settings.MEDIA_ROOT, self.text_file.name))
-            if self.audiofile:
-                os.remove(os.path.join(settings.MEDIA_ROOT, self.audiofile.name))
-            if self.zipfile:
-                zipfile_path = os.path.join(settings.MEDIA_ROOT, self.zipfile.name)
-                get_file_names_from_zip(zipfile_path)
-                os.remove(zipfile_path)
-        except:
-            pass
-        super().delete(*args, **kwargs)
-
     @staticmethod
     def count_files(user):
         return AudioFile.objects.filter(user=user).count()
@@ -43,13 +29,12 @@ class AudioFile(models.Model):
 def delete_files_on_audiofile_delete(sender, instance, **kwargs):
     try:
         if instance.text_file:
-            os.remove(os.path.join(settings.MEDIA_ROOT, instance.text_file.name))
+            os.remove(instance.text_file.path)
         if instance.audiofile:
-            os.remove(os.path.join(settings.MEDIA_ROOT, instance.audiofile.name))
+            os.remove(instance.audiofile.path)
         if instance.zipfile:
-            zipfile_path = os.path.join(settings.MEDIA_ROOT, instance.zipfile.name)
-            get_file_names_from_zip(zipfile_path)
-            os.remove(zipfile_path)
+            get_file_names_from_zip(instance.zipfile.path)
+            os.remove(instance.zipfile.path)
     except:
         pass
 

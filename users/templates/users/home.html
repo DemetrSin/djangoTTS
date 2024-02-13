@@ -10,7 +10,14 @@
             <p>This is the home page content.</p>
             {% if not user.is_authenticated %}
             <div class="mt-5">
+                <h6> You can get more functionality(Convert text to speech files, and vice versa convert speech to text from
+                mp3 or wav files, and even can convert to text your own voice)
+                after registration</h6>
                 <h2>Convert Text to Speech</h2>
+                <p>You can try our text to speech from form below or convert uploaded files in txt, pdf, docx format
+                    after
+                    <a href="{% url 'login' %} ">Sing Up</a>
+                </p>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}

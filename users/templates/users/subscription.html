@@ -1,0 +1,56 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">7-Day Subscription</h5>
+          <p class="card-text">Get unlimited access to premium features for 7 days.</p>
+          <p class="card-text">Random info about the project goes here.</p>
+          <p class="card-text">$9.99</p>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="duration" value="7">
+            <button type="submit" class="btn btn-primary">Buy Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">14-Day Subscription</h5>
+          <p class="card-text">Get unlimited access to premium features for 14 days.</p>
+          <p class="card-text">Random info about the project goes here.</p>
+          <p class="card-text">$9.99</p>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="duration" value="14">
+            <button type="submit" class="btn btn-primary">Buy Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">30-Day Subscription</h5>
+          <p class="card-text">Get unlimited access to premium features for 30 days.</p>
+          <p class="card-text">Random info about the project goes here.</p>
+          <p class="card-text">$9.99</p>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="duration" value="30">
+            <button type="submit" class="btn btn-primary">Buy Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

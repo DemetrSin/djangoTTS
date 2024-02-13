@@ -6,11 +6,10 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 
-from .forms import UserProfileForm, AnonymousHomeTTSForm
-from .models import CustomUser
-
 from tts.text_to_speech import AudioConverter
 
+from .forms import AnonymousHomeTTSForm, UserProfileForm
+from .models import CustomUser
 
 oauth = OAuth()
 
@@ -74,6 +73,7 @@ class HomeView(View):
         fail = False
         audio_converter = AudioConverter()
         if form.is_valid():
+            instance = form.save(commit=False)
             text = form.cleaned_data['text']
             if len(text) < 500:
                 output_file = audio_converter.text_to_speech(
@@ -84,6 +84,8 @@ class HomeView(View):
                 fail = True
             if not fail:
                 audio_file_url = f"{settings.MEDIA_URL}{output_file}"
+                instance.audiofile = output_file
+                instance.save()
         else:
             return render(request, self.template_name, {
                 'form': form,
@@ -126,4 +128,9 @@ class EditProfileView(UpdateView):
         return render(request, self.template_name, {'form': form})
 
 
+class SubscriptionView(View):
+    template_name = 'users/subscription.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
 

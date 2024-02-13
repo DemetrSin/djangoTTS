@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import CustomUser, AnonymousFiles
+from .models import AnonymousFiles, CustomUser
 
 
 class UserProfileForm(forms.ModelForm):
