@@ -87,6 +87,7 @@ class HomeView(View):
             if not fail:
                 audio_file_url = f"{settings.MEDIA_URL}{output_file}"
                 instance.audiofile = output_file
+                instance.created_at = datetime.now()
                 instance.save()
         else:
             return render(request, self.template_name, {
