@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import CustomUser, AnonymousFiles, Subscription
+from users.models import CustomUser, AnonymousFiles, Subscription
 from django.contrib.auth.hashers import check_password
 
 
