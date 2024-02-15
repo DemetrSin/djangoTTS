@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from users.models import CustomUser, AnonymousFiles, Subscription
-from django.contrib.auth.hashers import check_password
+
+from users.models import AnonymousFiles, CustomUser, Subscription
 
 
 class CustomUserTestCase(TestCase):

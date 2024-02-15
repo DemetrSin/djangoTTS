@@ -1,13 +1,15 @@
 from datetime import datetime
 
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
-from users.forms import UserProfileForm, AnonymousHomeTTSForm
+
+from users.forms import AnonymousHomeTTSForm, UserProfileForm
 from users.models import CustomUser, Subscription
+from users.views import UserProfileView
 
 
 class HomeViewTestCase(TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.client = Client()
 
     def test_get(self):
@@ -23,6 +25,7 @@ class HomeViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'users/home.html')
         self.assertIsNotNone(response.context['audio_file_url'])
         self.assertFalse(response.context['fail'])
+        self.assertTrue(response.context['form'].is_valid())
 
     def test_post_invalid(self):
         response = self.client.post(reverse('home'), {'text': ''})
@@ -39,8 +42,9 @@ class HomeViewTestCase(TestCase):
 
 class UserProfileViewTestCase(TestCase):
 
-    def setUp(self) -> None:
+    def setUp(self):
         self.client = Client()
+        self.view = UserProfileView()
         self.user = CustomUser.objects.create_user(
             username='Nike',
             auth0_id='google12313213',
@@ -51,12 +55,28 @@ class UserProfileViewTestCase(TestCase):
         self.client.force_login(self.user)
 
     def test_get_with_subscription(self):
-        subscription = Subscription.objects.create(user=self.user, end_date=datetime(2000, 12, 28, 12, 12, 12, 12), is_active=True)
+        subscription = Subscription.objects.create(
+            user=self.user,
+            end_date=datetime(2000, 12, 28, 12, 12, 12, 12),
+            is_active=True
+        )
         response = self.client.get(reverse('profile', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/profile.html')
         self.assertEqual(response.context['subscription'], subscription)
         self.assertTrue(response.context['user_profile'])
+        self.assertEqual(self.view.model, CustomUser)
+        self.assertEqual(self.view.form_class, UserProfileForm)
+        self.assertEqual((response.context['user_profile'].username,
+                          response.context['user_profile'].email,
+                          response.context['user_profile'].auth0_id,
+                          response.context['user_profile'].is_premium,
+                          ),
+                         ('Nike',
+                          'any@gmail.com',
+                          'google12313213',
+                          False
+                          ))
 
     def test_get_without_subscription(self):
         response = self.client.get(reverse('profile', kwargs={'pk': 1}))
@@ -64,3 +84,72 @@ class UserProfileViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'users/profile.html')
         self.assertIsNone(response.context['subscription'])
         self.assertTrue(response.context['user_profile'])
+        self.assertEqual(self.view.model, CustomUser)
+        self.assertEqual(self.view.form_class, UserProfileForm)
+
+    def test_unauthenticated_access(self):
+        self.client.logout()
+        response = self.client.get(reverse('profile', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, 302)
+
+
+class EditProfileViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='Nike',
+            auth0_id='google12313213',
+            email='any@gmail.com',
+            password='password',
+            is_premium=False
+        )
+        self.client.force_login(self.user)
+
+    def test_get(self):
+        response = self.client.get(reverse('edit_profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('users/edit_profile.html')
+        self.assertIsInstance(response.context['form'], UserProfileForm)
+
+    def test_valid_post(self):
+        response = self.client.post(reverse('edit_profile'), {'username': 'Adik'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile', kwargs={'pk': self.user.pk}))
+        self.assertTemplateUsed('users/edit_profile.html')
+        self.assertEqual(CustomUser.objects.get(pk=self.user.pk).username, 'Adik')
+
+    def test_invalid_post(self):
+        response = self.client.post(reverse('edit_profile'), {})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form'].is_valid())
+        self.assertFormError(response, 'form', 'username', "This field is required.")
+
+    def test_unauthenticated_access(self):
+        self.client.logout()
+        response = self.client.get(reverse('edit_profile'))
+        self.assertEqual(response.status_code, 302)
+
+
+class SubscriptionViewTestCase(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='Nike',
+            auth0_id='google12313213',
+            email='any@gmail.com',
+            password='password',
+            is_premium=False
+        )
+        self.client.force_login(self.user)
+
+    def test_get(self):
+        response = self.client.get(reverse('subscription'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('users/subscription.html')
+
+    def test_unauthorised_access(self):
+        self.client.logout()
+        response = self.client.get(reverse('subscription'))
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateNotUsed('users/subscription.html')

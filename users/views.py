@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from authlib.integrations.django_client import OAuth
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login as django_login
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -10,8 +13,6 @@ from tts.text_to_speech import AudioConverter
 
 from .forms import AnonymousHomeTTSForm, UserProfileForm
 from .models import CustomUser, Subscription
-from django.contrib import messages
-from datetime import datetime, timedelta
 
 oauth = OAuth()
 
@@ -110,27 +111,33 @@ class UserProfileView(View):
     form_class = UserProfileForm
 
     def get(self, request, *args, **kwargs):
-        user_profile = CustomUser.objects.get(pk=request.user.pk)
-        subscription = user_profile.subscription_set.filter(is_active=True).first()
-        messages_for_user = messages.get_messages(request)
-        return render(
-            request,
-            self.template_name,
-            {
-                'user_profile': user_profile,
-                'messages_for_user': messages_for_user,
-                'subscription': subscription
-            }
-        )
+        if request.user.is_authenticated:
+            user_profile = CustomUser.objects.get(pk=request.user.pk)
+            subscription = user_profile.subscription_set.filter(is_active=True).first()
+            messages_for_user = messages.get_messages(request)
+            return render(
+                request,
+                self.template_name,
+                {
+                    'user_profile': user_profile,
+                    'messages_for_user': messages_for_user,
+                    'subscription': subscription
+                }
+            )
+        else:
+            return redirect(reverse('login'))
 
 
 class EditProfileView(UpdateView):
     template_name = 'users/edit_profile.html'
 
     def get(self, request, *args, **kwargs):
-        user_profile = CustomUser.objects.get(pk=request.user.pk)
-        form = UserProfileForm(instance=user_profile)
-        return render(request, self.template_name, {'form': form})
+        if request.user.is_authenticated:
+            user_profile = CustomUser.objects.get(pk=request.user.pk)
+            form = UserProfileForm(instance=user_profile)
+            return render(request, self.template_name, {'form': form})
+        else:
+            return redirect(reverse('login'))
 
     def post(self, request, *args, **kwargs):
         user_profile = CustomUser.objects.get(pk=request.user.pk)
@@ -145,7 +152,10 @@ class SubscriptionView(View):
     template_name = 'users/subscription.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        if request.user.is_authenticated:
+            return render(request, self.template_name)
+        else:
+            return redirect(reverse('login'))
 
     def post(self, request, **kwargs):
         duration = int(request.POST.get('duration'))

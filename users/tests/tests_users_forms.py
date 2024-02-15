@@ -1,6 +1,7 @@
 from django.test import TestCase
-from users.forms import UserProfileForm, AnonymousHomeTTSForm
-from users.models import CustomUser, AnonymousFiles
+
+from users.forms import AnonymousHomeTTSForm, UserProfileForm
+from users.models import AnonymousFiles, CustomUser
 
 
 class UserProfileFormTestCase(TestCase):
