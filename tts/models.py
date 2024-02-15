@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 class AudioFile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    text = models.TextField()
+    text = models.TextField(blank=True, null=True)
     text_file = models.FileField(upload_to='text_files', blank=True, null=True)
     filename = models.CharField(max_length=124, blank=True, null=True)
     audiofile = models.FileField(upload_to='audio_files', blank=True, null=True)
