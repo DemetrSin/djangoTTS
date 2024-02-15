@@ -151,5 +151,18 @@ class SubscriptionViewTestCase(TestCase):
     def test_unauthorised_access(self):
         self.client.logout()
         response = self.client.get(reverse('subscription'))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
         self.assertTemplateNotUsed('users/subscription.html')
+
+    def test_valid_post(self):
+        response = self.client.post(reverse('subscription'), {'duration': 30})
+        self.assertTemplateNotUsed('users/subscription.html')
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile', kwargs={'pk': self.user.pk}))
+        self.assertTrue(Subscription.objects.filter(user=self.user, is_active=True).exists())
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_premium)
+
+    def test_invalid_post(self):
+        with self.assertRaises(TypeError):
+            self.client.post(reverse('subscription'), {})
