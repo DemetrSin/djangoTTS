@@ -158,55 +158,55 @@ class UsersHistoryViewTestCase(TestCase):
             self.assertIsNone(response.context['user_actions'])
 
 
-# class AudioToTextViewTestCase(TestCase):
-#     def setUp(self):
-#         self.user = CustomUser.objects.create(
-#             username='Nike',
-#             auth0_id='google12313213',
-#             email='any@gmail.com',
-#             password='password',
-#             is_premium=False
-#         )
-#
-#     def test_get_authenticated_connect(self):
-#         self.client.force_login(self.user)
-#         response = self.client.get(reverse('stt'))
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'tts/stt.html')
-#         self.assertTrue(response.context['form'])
-#
-#     def test_get_unauthenticated_connect(self):
-#         response = self.client.get(reverse('stt'))
-#         self.assertEqual(response.status_code, 302)
-#         self.assertTemplateNotUsed(response, 'tts/stt.html')
-#         with self.assertRaises(TypeError):
-#             self.assertTrue(response.context['form'])
-#
-#     def upload_audio(self, path):
-#         self.client.force_login(self.user)
-#         with open(path, 'rb') as file:
-#             response = self.client.post(reverse('stt'), {'audiofile': file})
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'tts/stt.html')
-#         self.assertTrue(response.context['form'])
-#         self.assertTrue(response.context['form'].is_valid)
-#         self.assertTrue(response.context['text'])
-#         self.assertEqual(response.context['text'], 'some text')
-#         try:
-#             os.remove('some.wav')
-#         except:
-#             pass
-#
-#     def test_post_wav(self):
-#         self.upload_audio(path='tts/tests/tests_files/some.wav')
-#
-#     def test_post_mp3(self):
-#         self.upload_audio(path='tts/tests/tests_files/some.mp3')
-#
-#     def test_post_invalid(self):
-#         self.client.force_login(self.user)
-#         with self.assertRaises(TypeError):
-#             response = self.client.post(reverse('stt'), {})
-#             self.assertFalse(response.context['form'].is_valid())
-#             self.assertEqual(response.status_code, 404)
-#             self.assertTemplateNotUsed(response, 'tts/stt.html')
+class AudioToTextViewTestCase(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create(
+            username='Nike',
+            auth0_id='google12313213',
+            email='any@gmail.com',
+            password='password',
+            is_premium=False
+        )
+
+    def test_get_authenticated_connect(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('stt'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tts/stt.html')
+        self.assertTrue(response.context['form'])
+
+    def test_get_unauthenticated_connect(self):
+        response = self.client.get(reverse('stt'))
+        self.assertEqual(response.status_code, 302)
+        self.assertTemplateNotUsed(response, 'tts/stt.html')
+        with self.assertRaises(TypeError):
+            self.assertTrue(response.context['form'])
+
+    def upload_audio(self, path):
+        self.client.force_login(self.user)
+        with open(path, 'rb') as file:
+            response = self.client.post(reverse('stt'), {'audiofile': file})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tts/stt.html')
+        self.assertTrue(response.context['form'])
+        self.assertTrue(response.context['form'].is_valid)
+        self.assertTrue(response.context['text'])
+        self.assertEqual(response.context['text'], 'some text')
+        try:
+            os.remove('some.wav')
+        except:
+            pass
+
+    def test_post_wav(self):
+        self.upload_audio(path='tts/tests/tests_files/some.wav')
+
+    def test_post_mp3(self):
+        self.upload_audio(path='tts/tests/tests_files/some.mp3')
+
+    def test_post_invalid(self):
+        self.client.force_login(self.user)
+        with self.assertRaises(TypeError):
+            response = self.client.post(reverse('stt'), {})
+            self.assertFalse(response.context['form'].is_valid())
+            self.assertEqual(response.status_code, 404)
+            self.assertTemplateNotUsed(response, 'tts/stt.html')

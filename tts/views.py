@@ -4,7 +4,7 @@ from django.views import View
 
 from .forms import AudioToTextForm, TextToSpeechForm
 from .models import AudioFile, UserAction
-# from .speech_to_text import STT
+from .speech_to_text import STT
 from .text_to_speech import AudioConverter
 
 
@@ -112,41 +112,41 @@ class UsersHistoryView(View):
         return render(request, self.template_name, {'user_actions': user_actions})
 
 
-# class AudioToTextView(View):
-#     template_name = 'tts/stt.html'
-#
-#     def get(self, request, *args, **kwargs):
-#         form = AudioToTextForm()
-#         return render(request, self.template_name, {'form': form})
-#
-#     def post(self, request, *args, **kwargs):
-#         form = AudioToTextForm(request.POST, request.FILES)
-#         stt = STT()
-#         if not request.FILES.get('audiofile'):
-#             return render(request, self.template_name, {'form': form})
-#
-#         if form.is_valid():
-#             instance = form.save(commit=False)
-#             instance.user = request.user
-#             if '.wav' in instance.audiofile.name:
-#                 text = stt.audio_to_text(instance.audiofile)
-#
-#             if instance.audiofile.name.endswith('.mp3'):
-#                 audiofile = stt.mp3_to_wav(
-#                     mp3_file=instance.audiofile,
-#                     wav_file=instance.audiofile.name.replace('.mp3', '.wav')
-#                 )
-#                 text = stt.audio_to_text(audiofile)
-#             UserAction.objects.create(user=request.user, action=f"Created text from {instance.audiofile.name}")
-#
-#         return render(request, self.template_name, {'form': form, 'text': text})
+class AudioToTextView(View):
+    template_name = 'tts/stt.html'
+
+    def get(self, request, *args, **kwargs):
+        form = AudioToTextForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = AudioToTextForm(request.POST, request.FILES)
+        stt = STT()
+        if not request.FILES.get('audiofile'):
+            return render(request, self.template_name, {'form': form})
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            if '.wav' in instance.audiofile.name:
+                text = stt.audio_to_text(instance.audiofile)
+
+            if instance.audiofile.name.endswith('.mp3'):
+                audiofile = stt.mp3_to_wav(
+                    mp3_file=instance.audiofile,
+                    wav_file=instance.audiofile.name.replace('.mp3', '.wav')
+                )
+                text = stt.audio_to_text(audiofile)
+            UserAction.objects.create(user=request.user, action=f"Created text from {instance.audiofile.name}")
+
+        return render(request, self.template_name, {'form': form, 'text': text})
 
 
-# class SpeechToTextView(View):
-#     template_name = 'tts/speech_to_text.html'
-#
-#     def get(self, request):
-#         stt = STT()
-#         text = stt.speech_to_text()
-#         UserAction.objects.create(user=request.user, action="Get record your own voice")
-#         return render(request, self.template_name, {'text': text})
+class SpeechToTextView(View):
+    template_name = 'tts/speech_to_text.html'
+
+    def get(self, request):
+        stt = STT()
+        text = stt.speech_to_text()
+        UserAction.objects.create(user=request.user, action="Get record your own voice")
+        return render(request, self.template_name, {'text': text})
