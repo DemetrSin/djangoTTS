@@ -24,7 +24,7 @@ class UserProfileFormTestCase(TestCase):
         self.assertEqual(len(form.errors), 1)
 
     def test_meta_fields(self):
-        form = UserProfileForm
+        form = UserProfileForm()
         self.assertEqual(form.Meta.model, CustomUser)
         self.assertEqual(form.Meta.fields, ['username'])
 

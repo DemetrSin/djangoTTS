@@ -25,8 +25,11 @@ class TextToSpeechForm(forms.ModelForm):
             )
             )
         else:
-            self.fields['text'].validators.append(MaxLengthValidator(limit_value=10000))
-
+            self.fields['text'].validators.append(MaxLengthValidator(
+                limit_value=10000,
+                message="Even with premium status you can't input more than 10000 symbols"
+            )
+            )
 
 
 class AudioToTextForm(forms.ModelForm):
