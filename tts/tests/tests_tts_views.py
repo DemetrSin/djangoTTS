@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
 
-from tts.forms import AudioToTextForm, TextToSpeechForm
+from tts.forms import TextToSpeechForm
 from tts.models import AudioFile, UserAction
 from users.models import CustomUser
 
@@ -35,69 +35,67 @@ class TextToSpeechViewTestCase(TestCase):
         with self.assertRaises(TypeError):
             self.assertIsNone(response.context['form'])
 
+    def test_post_text(self):
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('convert_text_to_speech'), {'text': 'some text'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
+        self.assertTrue(response.context['form'].is_valid())
+        self.assertTrue(response.context['audio_file_url'])
+        self.assertEqual(response.context['audio_file_url'], '/media/some.mp3')
+        self.assertTrue(response.context['output_file'])
+        self.assertEqual(response.context['output_file'], 'some.mp3')
+        self.assertTrue(AudioFile.objects.exists())
+        self.assertTrue(UserAction.objects.exists())
+        os.remove(os.path.join(settings.MEDIA_ROOT, 'some.mp3'))
 
-#
-#     def test_post_text(self):
-#         self.client.force_login(self.user)
-#         response = self.client.post(reverse('convert_text_to_speech'), {'text': 'some text'})
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
-#         self.assertTrue(response.context['form'].is_valid())
-#         self.assertTrue(response.context['audio_file_url'])
-#         self.assertEqual(response.context['audio_file_url'], '/media/some.mp3')
-#         self.assertTrue(response.context['output_file'])
-#         self.assertEqual(response.context['output_file'], 'some.mp3')
-#         self.assertTrue(AudioFile.objects.exists())
-#         self.assertTrue(UserAction.objects.exists())
-#         os.remove(os.path.join(settings.MEDIA_ROOT, 'some.mp3'))
-#
-#     def common_file_upload(self, file_path):
-#         with open(file_path, 'rb') as file:
-#             self.client.force_login(self.user)
-#             response = self.client.post(
-#                 reverse('convert_text_to_speech'),
-#                 {'text_file': file}
-#             )
-#             self.assertEqual(response.status_code, 200)
-#             self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
-#             self.assertTrue(response.context['form'].is_valid())
-#             self.assertTrue(response.context['audio_file_url'])
-#             self.assertEqual(response.context['audio_file_url'], '/media/output.mp3')
-#             self.assertTrue(response.context['output_file'])
-#             self.assertEqual(response.context['output_file'], 'output.mp3')
-#             self.assertTrue(AudioFile.objects.exists())
-#             self.assertTrue(UserAction.objects.exists())
-#             AudioFile.objects.filter(user=self.user).delete()
-#
-#     def test_post_docx_file(self):
-#         self.common_file_upload('tts/tests/tests_files/output.docx')
-#
-#     def test_post_pdf_file(self):
-#         self.common_file_upload('tts/tests/tests_files/output.pdf')
-#
-#     def test_post_pdf_file(self):
-#         self.common_file_upload('tts/tests/tests_files/output.txt')
-#
-#     def test_post_users_limit(self):
-#         self.client.force_login(self.user)
-#         for _ in range(11):
-#             AudioFile.objects.create(user=self.user)
-#         response = self.client.post(reverse('convert_text_to_speech'), {'text': 'some text'})
-#         self.assertTrue(response.context['users_limit'])
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
-#         self.assertTrue(response.context['form'].is_valid())
-#         self.assertIsNone(response.context['audio_file_url'])
-#         with self.assertRaises(KeyError):
-#             response.context['output_file']
-#
-#     def test_post_invalid(self):
-#         self.client.force_login(self.user)
-#         with self.assertRaises(TypeError):
-#             response = self.client.post(reverse('convert_text_to_speech'), {})
-#             self.assertFalse(response.context['form'].is_valid())
-#             self.assertEqual(response.status_code, 404)
-#             self.assertTemplateNotUsed(response, 'tts/convert_text_to_speech.html')
+    def common_file_upload(self, file_path):
+        with open(file_path, 'rb') as file:
+            self.client.force_login(self.user)
+            response = self.client.post(
+                reverse('convert_text_to_speech'),
+                {'text_file': file}
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
+            self.assertTrue(response.context['form'].is_valid())
+            self.assertTrue(response.context['audio_file_url'])
+            self.assertEqual(response.context['audio_file_url'], '/media/output.mp3')
+            self.assertTrue(response.context['output_file'])
+            self.assertEqual(response.context['output_file'], 'output.mp3')
+            self.assertTrue(AudioFile.objects.exists())
+            self.assertTrue(UserAction.objects.exists())
+            AudioFile.objects.filter(user=self.user).delete()
+
+    def test_post_docx_file(self):
+        self.common_file_upload('tts/tests/tests_files/output.docx')
+
+    def test_post_pdf_file(self):
+        self.common_file_upload('tts/tests/tests_files/output.pdf')
+
+    def test_post_txt_file(self):
+        self.common_file_upload('tts/tests/tests_files/output.txt')
+
+    def test_post_users_limit(self):
+        self.client.force_login(self.user)
+        for _ in range(11):
+            AudioFile.objects.create(user=self.user)
+        response = self.client.post(reverse('convert_text_to_speech'), {'text': 'some text'})
+        self.assertTrue(response.context['users_limit'])
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tts/convert_text_to_speech.html')
+        self.assertTrue(response.context['form'].is_valid())
+        self.assertIsNone(response.context['audio_file_url'])
+        with self.assertRaises(KeyError):
+            response.context['output_file']
+
+    def test_post_invalid(self):
+        self.client.force_login(self.user)
+        with self.assertRaises(TypeError):
+            response = self.client.post(reverse('convert_text_to_speech'), {})
+            self.assertFalse(response.context['form'].is_valid())
+            self.assertEqual(response.status_code, 404)
+            self.assertTemplateNotUsed(response, 'tts/convert_text_to_speech.html')
 
 
 class TtsFilesViewTestCase(TestCase):

@@ -1,6 +1,8 @@
 import speech_recognition as sr
 from pydub import AudioSegment
 
+from users.custom_logger import Logger
+
 
 class STT:
     recognizer = sr.Recognizer()
@@ -28,8 +30,8 @@ class STT:
                     )
                     full_text += text
 
-                except:
-                    pass
+                except Exception as e:
+                    Logger(level='warning', msg=f'{e}').create_log()
             return full_text
 
     def speech_to_text(self):
@@ -45,5 +47,5 @@ class STT:
                 language="en-US"
             )
             return text
-        except:
-            pass
+        except Exception as e:
+            Logger(level='warning', msg=f'{e}').create_log()

@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import resolve, reverse
 
-from users.models import CustomUser
 from tts import views
+from users.models import CustomUser
 
 
 class TtsUrlsTestCase(TestCase):

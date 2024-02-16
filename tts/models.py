@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from users.custom_logger import Logger
+
 
 class AudioFile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -35,8 +37,8 @@ def delete_files_on_audiofile_delete(sender, instance, **kwargs):
         if instance.zipfile:
             get_file_names_from_zip(instance.zipfile.path)
             os.remove(instance.zipfile.path)
-    except:
-        pass
+    except Exception as e:
+        Logger(level='error', msg=f'{e}').create_log()
 
 
 class UserAction(models.Model):

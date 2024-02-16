@@ -1,5 +1,7 @@
+import os
 from datetime import datetime
 
+from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -20,12 +22,13 @@ class HomeViewTestCase(TestCase):
         self.assertFalse(response.context['user_info'])
 
     def test_post_valid(self):
-        response = self.client.post(reverse('home'), {'text': 'Some text'})
+        response = self.client.post(reverse('home'), {'text': 'some text'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/home.html')
         self.assertIsNotNone(response.context['audio_file_url'])
         self.assertFalse(response.context['fail'])
         self.assertTrue(response.context['form'].is_valid())
+        os.remove(os.path.join(settings.MEDIA_ROOT, 'some.mp3'))
 
     def test_post_invalid(self):
         response = self.client.post(reverse('home'), {'text': ''})
@@ -34,7 +37,7 @@ class HomeViewTestCase(TestCase):
         self.assertTrue(response.context['form'].errors)
 
     def test_post_unavailable_text_length(self):
-        response = self.client.post(reverse('home'), {'text': f'{"a"*501}'})
+        response = self.client.post(reverse('home'), {'text': f'{"a" * 501}'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/home.html')
         self.assertTrue(response.context['fail'])
