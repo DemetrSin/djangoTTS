@@ -5,7 +5,7 @@ from users import views
 from users.models import CustomUser
 
 
-class TestUrls(TestCase):
+class UsersUrlsTestCase(TestCase):
 
     def setUp(self):
         self.user = CustomUser.objects.create_user(username='Nick')
