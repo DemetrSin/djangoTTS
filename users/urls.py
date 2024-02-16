@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 
 from . import views
 
@@ -7,7 +8,22 @@ urlpatterns = [
     path('callback', views.callback, name='callback'),
     path('logout', views.logout, name='logout'),
     path('home', views.HomeView.as_view(), name='home'),
-    path('profile/<int:pk>', views.UserProfileView.as_view(), name='profile'),
-    path('profile/edit/', views.EditProfileView.as_view(), name='edit_profile'),
-    path('subscription', views.SubscriptionView.as_view(), name='subscription')
+    path('profile/<int:pk>',
+         login_required(
+             function=views.UserProfileView.as_view(),
+             login_url='login'
+         ),
+         name='profile'),
+    path('profile/edit/',
+         login_required(
+             function=views.EditProfileView.as_view(),
+             login_url='login'
+         ),
+         name='edit_profile'),
+    path('subscription',
+         login_required(
+             function=views.SubscriptionView.as_view(),
+             login_url='login'
+         ),
+         name='subscription')
 ]
