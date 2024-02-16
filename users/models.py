@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from .custom_logger import Logger
 
 
 class CustomUser(AbstractUser):
@@ -27,8 +28,11 @@ class AnonymousFiles(models.Model):
 
 @receiver(post_delete, sender=AnonymousFiles)
 def delete_audiofile(sender, instance, **kwargs):
-    if instance.audiofile:
-        os.remove(instance.audiofile.path)
+    try:
+        if instance.audiofile:
+            os.remove(instance.audiofile.path)
+    except FileNotFoundError as e:
+        Logger(level='warning', msg=f'{e}')
 
 
 class Subscription(models.Model):

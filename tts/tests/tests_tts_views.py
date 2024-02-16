@@ -192,6 +192,10 @@ class AudioToTextViewTestCase(TestCase):
         self.assertTrue(response.context['form'].is_valid)
         self.assertTrue(response.context['text'])
         self.assertEqual(response.context['text'], 'some text')
+        try:
+            os.remove('some.wav')
+        except:
+            pass
 
     def test_post_wav(self):
         self.upload_audio(path='tts/tests/tests_files/some.wav')
