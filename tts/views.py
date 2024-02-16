@@ -19,8 +19,12 @@ class TextToSpeechView(View):
         form = TextToSpeechForm(request.POST, request.FILES, user=request.user)
         audio_file_url = None
         users_limit = False
+        empty_form = False
         if AudioFile.count_files(user=request.user) >= 10 and not request.user.is_premium:
             users_limit = True
+
+        if not request.POST.get('text') and not request.FILES.get('text_file'):
+            return render(request, self.template_name, {'form': form})
 
         if form.is_valid() and not users_limit:
             text = form.cleaned_data['text']
@@ -77,7 +81,12 @@ class TextToSpeechView(View):
             instance.save()
         else:
             return render(request, self.template_name,
-                          {'form': form, 'audio_file_url': audio_file_url, 'users_limit': users_limit})
+                          {
+                              'form': form,
+                              'audio_file_url': audio_file_url,
+                              'users_limit': users_limit,
+                              'empty_form': empty_form
+                          })
 
         return render(request, self.template_name, {
             'form': form,
@@ -113,6 +122,9 @@ class AudioToTextView(View):
     def post(self, request, *args, **kwargs):
         form = AudioToTextForm(request.POST, request.FILES)
         stt = STT()
+        if not request.FILES.get('audiofile'):
+            return render(request, self.template_name, {'form': form})
+
         if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user

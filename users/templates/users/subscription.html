@@ -14,7 +14,9 @@
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="duration" value="7">
+            {% if user.is_superuser %}
             <button type="submit" class="btn btn-primary">Buy Now</button>
+            {% endif %}
           </form>
         </div>
       </div>
@@ -30,7 +32,9 @@
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="duration" value="14">
+            {% if user.is_superuser %}
             <button type="submit" class="btn btn-primary">Buy Now</button>
+            {% endif %}
           </form>
         </div>
       </div>
@@ -46,7 +50,9 @@
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="duration" value="30">
+            {% if user.is_superuser %}
             <button type="submit" class="btn btn-primary">Buy Now</button>
+            {% endif %}
           </form>
         </div>
       </div>
