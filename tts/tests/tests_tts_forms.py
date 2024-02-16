@@ -1,5 +1,6 @@
 from django.test import TestCase
-from tts.forms import TextToSpeechForm, AudioToTextForm
+
+from tts.forms import AudioToTextForm, TextToSpeechForm
 from tts.models import AudioFile
 from users.models import CustomUser
 
